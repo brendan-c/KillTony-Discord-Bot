@@ -27,7 +27,7 @@ module.exports = {
 
         if (data[episodeNumber]) {
             const episode = data[episodeNumber];
-            const guests = episode.guests.join(', ');
+            const guests = Array.isArray(episode.guests) ? episode.guests.join(', ') : episode.guests;
             const venue = episode.venue || 'Unknown Venue';
 
             // Create embed
