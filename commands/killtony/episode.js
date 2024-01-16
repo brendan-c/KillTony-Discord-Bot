@@ -37,7 +37,7 @@ module.exports = {
                 .setURL(episode.url)
                 .setDescription(`**Venue:** ${venue}\n**Guests:** ${guests}`)
                 .setTimestamp()
-                .setFooter({ text: 'Powered by KillTony.info' });
+                .setFooter({ text: 'Data source: skanks.xyz/kt/' });
 
             // Handling long performer lists
             let performerDetails = '';

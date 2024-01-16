@@ -45,7 +45,7 @@ module.exports = {
                     .setTitle(`Episodes featuring performer(s) "${searchName}"`)
                     // .setDescription(currentItems.join('\n') || 'No episodes found')
                     .setTimestamp()
-                    .setFooter({ text: `Page ${page} of ${pages} • Powered by KillTony.info` })
+                    .setFooter({ text: `Page ${page} of ${pages} • Data source: skanks.xyz/kt/` })
                     .addFields({ name: 'Episode - Matched Name', value: currentItems.join('\n') || 'No episodes found'});
     
                 return embed;
