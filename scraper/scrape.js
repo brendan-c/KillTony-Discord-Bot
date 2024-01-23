@@ -61,8 +61,9 @@ async function extractShowDetails(page) {
 
   // Use getTextContent function to get text content of elements
   const latestEpisode = await getTextContent(episodeElementHandle);
-  const guests = await getTextContent(guestsElementHandle);
+  let guests = await getTextContent(guestsElementHandle);
   const venue = await getTextContent(venueHandle);
+  guests = guests.split(',').map(guest => guest.trim().replace(/\d+$/, '').trim())
 
   return { url, guests, performers, venue, latestEpisode };
 }
