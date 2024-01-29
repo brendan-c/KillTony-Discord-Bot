@@ -61,3 +61,10 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 });
+
+fs.watch('commands/killtony/data/data.json', (eventType, filename) => {
+	if (filename && eventType === 'change') {
+	  console.log(`${filename} has changed, restarting...`);
+	  process.exit(); // This will stop the current process
+	}
+});
