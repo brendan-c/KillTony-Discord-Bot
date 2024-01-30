@@ -5,7 +5,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
-const Fuse = require("fuse.js");
+const { searchByName } = require("../../utils.js");
 const fs = require("fs");
 
 // Load your data file
@@ -26,31 +26,7 @@ module.exports = {
   async execute(interaction) {
     const searchName = interaction.options.getString("name").toLowerCase();
 
-    let allGuests = [];
-    for (const episodeNumber in data) {
-      const episode = data[episodeNumber];
-      episode.guests.forEach((guest) => {
-        allGuests.push({
-          episodeNumber,
-          episodeUrl: episode.url,
-          name: guest,
-        });
-      });
-    }
-
-    // Setup Fuse.js
-    const fuse = new Fuse(allGuests, {
-      keys: ["name"],
-      threshold: 0.3, // Adjust the threshold value as needed
-    });
-
-    // Perform the search
-    const results = fuse.search(searchName);
-
-    let episodesFound = results.map((result) => {
-      const guest = result.item;
-      return `[#${guest.episodeNumber}](${guest.episodeUrl}) – ${guest.name}`;
-    });
+    let episodesFound = searchByName(data, "guest", searchName)
 
     // Paginate results
     const itemsPerPage = 8;
