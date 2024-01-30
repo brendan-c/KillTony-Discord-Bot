@@ -5,7 +5,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
-const { searchByName } = require("../../utils.js");
+const { shortenURL, searchByName } = require("../../utils.js");
 const fs = require("fs");
 
 // Load your data file
@@ -26,7 +26,13 @@ module.exports = {
   async execute(interaction) {
     const searchName = interaction.options.getString("name").toLowerCase();
 
-    let episodesFound = searchByName(data, "performer", searchName)
+    let searchResults = searchByName(data, "performer", searchName);
+
+    let episodesFound = searchResults.map((result) => {
+      return `[#${result.episodeNumber}](${result.episodeUrl})  –  [${
+        result.name
+      }](${shortenURL(result.performance)})`;
+    });
 
     // Paginate results
     const itemsPerPage = 8;
@@ -51,7 +57,10 @@ module.exports = {
         })
         .addFields({
           name: "Episode - Matched Name",
-          value: currentItems.join("\n") || "No episodes found",
+          value:
+            `[#${item.episodeNumber}](${item.episodeUrl})  –  [${
+              item.name
+            }](${shortenURL(item.performance)})` || "No episodes found",
         });
 
       return embed;

@@ -7,9 +7,13 @@ function shortenURL(url) {
   return newURL;
 }
 
-function searchByName(data, searchType, searchName) {
+function searchByName(data, searchType, searchName, targetEpisode = null) {
   let allItems = [];
   for (const episodeNumber in data) {
+    if (targetEpisode && episodeNumber !== targetEpisode) {
+      continue;
+    }
+
     const episode = data[episodeNumber];
     if (searchType === "performer") {
       episode.performers.forEach((item) => {
@@ -33,22 +37,13 @@ function searchByName(data, searchType, searchName) {
 
   const fuse = new Fuse(allItems, {
     keys: ["name"],
-    includeScore: searchType === "performer",
+    includeScore: true,
     threshold: 0.3,
   });
 
   const results = fuse.search(searchName);
 
-  return results.map((result) => {
-    const item = result.item;
-    if (searchType === "performer") {
-      return `[#${item.episodeNumber}](${item.episodeUrl})  –  [${
-        item.name
-      }](${shortenURL(item.performance)})`;
-    } else if (searchType === "guest") {
-      return `[#${item.episodeNumber}](${item.episodeUrl}) – ${item.name}`;
-    }
-  });
+  return results.map((result) => result.item);
 }
 
 module.exports = {

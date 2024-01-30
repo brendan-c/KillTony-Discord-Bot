@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { searchByName } = require("../../utils.js");
 const fs = require('fs');
 
 // Load your data file
@@ -15,24 +16,24 @@ module.exports = {
         )
         .addStringOption(option =>
             option.setName('name')
-                .setDescription('The partial name of the performer')
+                .setDescription('Name of the performer')
                 .setRequired(true)
         ),
     async execute(interaction) {
         const episodeNumber = interaction.options.getString('episode');
-        const partialPerformerName = interaction.options.getString('name').toLowerCase();
+        const searchName = interaction.options.getString('name').toLowerCase();
 
-        if (data[episodeNumber]) {
-            const episode = data[episodeNumber];
-            const performer = episode.performers.find(p => p.name.toLowerCase().includes(partialPerformerName));
+        // Use the search function
+        let searchResults = searchByName(data, 'performer', searchName, episodeNumber);
 
-            if (performer) {
-                await interaction.reply(`Performance link for ${performer.name} in Episode #${episodeNumber}: ${performer.performance}`);
-            } else {
-                await interaction.reply(`No performer matching '${partialPerformerName}' found in Episode #${episodeNumber}.`);
-            }
+        // Handle the search results
+        if (searchResults.length > 0) {
+            const firstMatch = searchResults[0]; // Assuming you want the first match
+            console.log(firstMatch)
+            const formattedResult = `Clip of ${firstMatch.name}'s performance on episode #${firstMatch.episodeNumber}: ${firstMatch.performance}`;
+            await interaction.reply(formattedResult);
         } else {
-            await interaction.reply(`Episode #${episodeNumber} not found.`);
+            await interaction.reply(`No matching performer found in Episode #${episodeNumber}.`);
         }
     }
 };

@@ -26,7 +26,11 @@ module.exports = {
   async execute(interaction) {
     const searchName = interaction.options.getString("name").toLowerCase();
 
-    let episodesFound = searchByName(data, "guest", searchName)
+    let searchResults = searchByName(data, "guest", searchName);
+
+    let episodesFound = searchResults.map((result) => {
+      return `[#${result.episodeNumber}](${result.episodeUrl}) – ${result.name}`;
+    });
 
     // Paginate results
     const itemsPerPage = 8;
