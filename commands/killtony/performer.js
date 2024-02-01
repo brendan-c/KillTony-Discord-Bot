@@ -27,13 +27,13 @@ module.exports = {
     const searchName = interaction.options.getString("name").toLowerCase();
 
     let searchResults = searchByName(data, "performer", searchName);
-
+    
     let episodesFound = searchResults.map((result) => {
       return `[#${result.episodeNumber}](${result.episodeUrl})  –  [${
         result.name
       }](${shortenURL(result.performance)})`;
     });
-
+    console.log(episodesFound)
     // Paginate results
     const itemsPerPage = 8;
     const pages =
@@ -46,25 +46,16 @@ module.exports = {
       const start = (page - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       const currentItems = episodesFound.slice(start, end);
-
+  
       const embed = new EmbedBuilder()
-        .setColor("#0099ff")
-        .setTitle(`Episodes featuring performer(s) "${searchName}"`)
-        // .setDescription(currentItems.join('\n') || 'No episodes found')
-        .setTimestamp()
-        .setFooter({
-          text: `Page ${page} of ${pages} • Data source: skanks.xyz/kt/`,
-        })
-        .addFields({
-          name: "Episode - Matched Name",
-          value:
-            `[#${item.episodeNumber}](${item.episodeUrl})  –  [${
-              item.name
-            }](${shortenURL(item.performance)})` || "No episodes found",
-        });
-
+          .setColor("#0099ff")
+          .setTitle(`Episodes featuring performer(s) "${searchName}"`)
+          .setTimestamp()
+          .setFooter({ text: `Page ${page} of ${pages} • Data source: skanks.xyz/kt/` })
+          .addFields({ name: "Episode - Matched Name", value: currentItems.join("\n") || "No episodes found" });
+  
       return embed;
-    };
+  };
 
     const generateButtons = (currentPage) => {
       return new ActionRowBuilder().addComponents(

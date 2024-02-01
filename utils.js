@@ -1,6 +1,7 @@
 const Fuse = require("fuse.js");
 
 function shortenURL(url) {
+  if (!url) return '';
   let newURL = url.replace("youtube.com/watch?v=", "youtu.be/");
   newURL = newURL.replace("&start=", "&t=");
   newURL = newURL.split("&end")[0];
