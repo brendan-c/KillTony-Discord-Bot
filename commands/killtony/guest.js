@@ -26,12 +26,10 @@ module.exports = {
   async execute(interaction) {
     const searchName = interaction.options.getString("name").toLowerCase();
 
-    // Adjust searchByName for performers
-    let searchResults = searchByName(data, "performer", searchName);
+    let searchResults = searchByName(data, "guest", searchName);
 
-    // Format results for performers
     let episodesFound = searchResults.map((result) => {
-      return `[#${result.episodeNumber}](${result.episodeUrl})  –  [${result.name}](${shortenURL(result.performance)})`;
+      return `[#${result.episodeNumber}](${result.episodeUrl}) – ${result.name}`;
     });
 
     // Paginate results
