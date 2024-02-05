@@ -33,7 +33,7 @@ module.exports = {
         result.name
       }](${shortenURL(result.performance)})`;
     });
-    console.log(episodesFound)
+    // console.log(episodesFound)
     // Paginate results
     const itemsPerPage = 8;
     const pages =
