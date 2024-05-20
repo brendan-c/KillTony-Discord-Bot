@@ -1,49 +1,30 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { searchByName } = require("../../utility/search");
 const { sendPaginatedEmbed } = require("../../utility/commandUtils");
+const { fetchAndDisplayEpisode } = require("../../utility/episodeUtils");
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("search")
-    .setDescription("Search for episodes by name.")
-    .addStringOption((option) =>
-      option.setName("name").setDescription("Enter a name").setRequired(true)
-    ),
-  async execute(interaction) {
-    const searchName = interaction.options.getString("name");
-    const { guestResults, performerResults } = await searchByName(searchName);
+    data: new SlashCommandBuilder()
+        .setName("search")
+        .setDescription("Search for episodes by name or number.")
+        .addStringOption((option) =>
+            option.setName("name").setDescription("Enter a name or episode number starting with #").setRequired(true)
+        ),
+    async execute(interaction) {
+        const searchQuery = interaction.options.getString("name");
 
-    // Helper function to format guest episode entry
-    function formatGuestEpisode(guest) {
-      return `[#${guest.e}](${guest.l}) - ${guest.matchedName} (Guest)`;
-    }
+        // Check if the query is an episode number (e.g., "#405")
+        if (searchQuery.startsWith('#')) {
+            const episodeNumber = searchQuery.slice(1); // Remove the '#' to get the episode number
+            await fetchAndDisplayEpisode(interaction, episodeNumber);
+            return;
+        }
 
-    // Helper function to format performer episode entry
-    function formatPerformerLink(performer, matchedName) {
-      return performer.n === matchedName
-        ? `[${matchedName}](${performer.l})`
-        : null;
-    }
+        const { guestResults, performerResults } = await searchByName(searchQuery);
+        let results = guestResults.map(guest => `[#${guest.e}](${guest.l}) - ${guest.matchedName} (Guest)`)
+                         .concat(performerResults.map(performer => `[#${performer.e}](${performer.l}) - ${performer.matchedName} (Performer)`));
 
-    // Function to format episode details
-    function formatPerformerEpisode(episode) {
-      // Generate links only for the matched performers
-      const performerLinks = episode.p
-        .map((performer) => formatPerformerLink(performer, episode.matchedName))
-        .filter((link) => link !== null); // Filter out null values
-
-      // Join all valid links with a comma and return the formatted string
-      return `[#${episode.e}](${episode.l}) – ${performerLinks.join(
-        ", "
-      )} (Performer)`;
-    }
-
-    // Use in the main execute function or where applicable
-    let results = guestResults
-      .map(formatGuestEpisode)
-      .concat(performerResults.map(formatPerformerEpisode));
-
-    const title = `Episodes featuring "${searchName}" `
-    await sendPaginatedEmbed(interaction, results, 8, title);
-  },
+        const title = `Episodes featuring "${searchQuery}" `;
+        await sendPaginatedEmbed(interaction, results, 8, title);
+    },
 };
