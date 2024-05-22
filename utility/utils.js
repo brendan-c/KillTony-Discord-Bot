@@ -20,7 +20,7 @@ function addEpisodeNumbersAndYoutubeLink(data) {
 
 // Function to add YouTube URLs to each performer in a show
 function addTimestampedYouTubeLinks(show) {
-    const baseURL = "https://www.youtube.com/watch";
+    const baseURL = "https://youtube.com/watch";
     if (show.y && Array.isArray(show.p)) {
         show.p.forEach((performer) => {
             const times = performer.t.split("-");
